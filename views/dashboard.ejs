@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <h1>Welcome, <%= user.name %> 👋</h1>
+    
+    <form action="/auth/logout" method="GET" style="margin-top: 10px;">
+        <button type="submit">Logout</button>
+    </form>
+
+    <h2>Upload a File:</h2>
+    <form action="/api/files/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required />
+        <button type="submit">Upload</button>
+    </form>
+
+
+    <h2>Shorten a New URL:</h2>
+    <form action="/api/urls/shorten" method="POST">
+        <input type="text" name="longUrl" placeholder="Enter long URL" required style="width: 400px;" />
+        <button type="submit">Shorten</button>
+    </form>
+
+    <h2>Your Shortened URLs:</h2>
+    <% if (urls.length===0) { %>
+        <p>No URLs yet.</p>
+        <% } else { %>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Short URL</th>
+                    <th>Original URL</th>
+                    <th>Clicks</th>
+                </tr>
+                <% urls.forEach((url, i)=> { %>
+                    <tr>
+                        <td>
+                            <%= i + 1 %>
+                        </td>
+                        <td><a href="/<%= url.shortCode %>" target="_blank">
+                                <%= requestHost %>/<%= url.shortCode %>
+                            </a></td>
+                        <td>
+                            <%= url.longUrl %>
+                        </td>
+                        <td>
+                            <%= url.clickCount %>
+                        </td>
+                        <td>
+                            <form action="/api/urls/delete/<%= url._id %>" method="POST" onsubmit="return confirm('Delete this link?')">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                    <% }) %>
+            </table>
+            <% } %>
+</body>
+
+</html>
