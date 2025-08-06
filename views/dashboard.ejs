@@ -1,66 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
 <body>
-    <h1>Welcome, <%= user.name %> 👋</h1>
-    
-    <form action="/auth/logout" method="GET" style="margin-top: 10px;">
-        <button type="submit">Logout</button>
-    </form>
+    <div class="dashboard-header">
+        <h1>Hello, <%= user.name %> 👋</h1>
+        <form action="/auth/logout" method="GET">
+            <button type="submit" class="button button-danger">Logout</button>
+        </form>
+    </div>
 
-    <h2>Upload a File:</h2>
-    <form action="/api/files/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" required />
-        <button type="submit">Upload</button>
-    </form>
+    <div class="container">
+        <div class="dashboard-actions">
+            <div class="card">
+                <h3>Shorten a New URL</h3>
+                <form action="/api/urls/shorten" method="POST" class="shorten-form">
+                    <input type="text" name="longUrl" placeholder="Enter a long URL to shorten" required
+                        class="input-field">
+                    <button type="submit" class="button button-primary">Shorten</button>
+                </form>
+            </div>
 
+            <div class="card">
+                <h3>Upload a File</h3>
+                <form action="/api/files/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <input type="file" name="file" required class="input-file">
+                    <button type="submit" class="button button-secondary">Upload</button>
+                </form>
+            </div>
+        </div>
 
-    <h2>Shorten a New URL:</h2>
-    <form action="/api/urls/shorten" method="POST">
-        <input type="text" name="longUrl" placeholder="Enter long URL" required style="width: 400px;" />
-        <button type="submit">Shorten</button>
-    </form>
-
-    <h2>Your Shortened URLs:</h2>
-    <% if (urls.length===0) { %>
-        <p>No URLs yet.</p>
-        <% } else { %>
-            <table>
-                <tr>
-                    <th>#</th>
-                    <th>Short URL</th>
-                    <th>Original URL</th>
-                    <th>Clicks</th>
-                </tr>
-                <% urls.forEach((url, i)=> { %>
-                    <tr>
-                        <td>
-                            <%= i + 1 %>
-                        </td>
-                        <td><a href="/<%= url.shortCode %>" target="_blank">
-                                <%= requestHost %>/<%= url.shortCode %>
-                            </a></td>
-                        <td>
-                            <%= url.longUrl %>
-                        </td>
-                        <td>
-                            <%= url.clickCount %>
-                        </td>
-                        <td>
-                            <form action="/api/urls/delete/<%= url._id %>" method="POST" onsubmit="return confirm('Delete this link?')">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-
-                    </tr>
-                    <% }) %>
-            </table>
-            <% } %>
+        <div class="url-list">
+            <h3>Your Shortened URLs</h3>
+            <% if (urls.length===0) { %>
+                <p>No URLs have been shortened yet.</p>
+                <% } else { %>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Short URL</th>
+                                    <th>Original URL</th>
+                                    <th>Clicks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% urls.forEach((url, i)=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= i + 1 %>
+                                        </td>
+                                        <td>
+                                            <a href="/<%= url.shortCode %>" target="_blank" class="short-link">
+                                                <%= requestHost %>/<%= url.shortCode %>
+                                            </a>
+                                        </td>
+                                        <td class="original-url-cell">
+                                            <%= url.longUrl %>
+                                        </td>
+                                        <td>
+                                            <%= url.clickCount %>
+                                        </td>
+                                        <td>
+                                            <form action="/api/urls/delete/<%= url._id %>" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this link?')">
+                                                <button type="submit"
+                                                    class="button button-small button-danger">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
 </body>
 
 </html>

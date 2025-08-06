@@ -4,19 +4,19 @@ const { shortenUrl, getUserUrls } = require("../controllers/urlController");
 const { protect } = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
-// 🔗 Shorten a new long URL
+//  Shorten a new long URL
 router.post("/shorten", protect, shortenUrl);
 
-// 🗂️ Get all URLs of the logged-in user (API route)
+//  Get all URLs of the logged-in user (API route)
 router.get("/my-urls", protect, getUserUrls);
 
-// ❌ Delete a short URL by ID (from dashboard)
+//  Delete a short URL by ID (from dashboard)
 router.post("/delete/:id", protect, async (req, res) => {
   await require("../models/Url").deleteOne({ _id: req.params.id, owner: req.user._id });
   res.redirect("/api/urls/dashboard");
 });
 
-// 📁 Upload a file and get a short URL
+//  Upload a file and get a short URL
 router.post("/upload", protect, upload.single("file"), async (req, res) => {
   const Url = require("../models/Url");
   const shortid = require("shortid");
@@ -35,7 +35,7 @@ router.post("/upload", protect, upload.single("file"), async (req, res) => {
   res.redirect("/api/urls/dashboard");
 });
 
-// 📊 Dashboard UI: Show all user-specific links
+// Dashboard UI: Show all user-specific links
 router.get("/dashboard", protect, async (req, res) => {
   const urls = await require("../models/Url").find({ owner: req.user._id }).sort({ createdAt: -1 });
   res.render("dashboard", {
